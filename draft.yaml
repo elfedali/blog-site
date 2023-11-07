@@ -1,0 +1,92 @@
+models:
+  Profile:
+    user_id: id
+    firstName: string:60 nullable
+    middleName: string:60 nullable
+    lastName: string:60 nullable
+    nicename: string:50 nullable
+    mobile: string:50 nullable
+    phone: string:50 nullable
+    lastLogin: DateTime nullable
+    bio: text nullable
+    avatar: string nullable
+    birthday: Date nullable
+    Adresse: string nullable
+    zip: string nullable
+    city: string nullable
+    country: string nullable
+
+  Category:
+    title: string unique
+    slug: string unique
+    content: text
+    weight: int default:0
+    relationships:
+      belongsToMany: Post
+  Tag:
+    title: string unique
+    slug: string unique
+    content: text
+    weight: int default:0
+    relationships:
+      belongsToMany: Post
+  Post:
+    author_id: id foreign:users
+    title: string index
+    slug: string unique index
+    excerpt: text nullable
+    published: boolean default:false
+    publishedAt: DateTime nullable
+    content: longtext
+    pinned: boolean
+    pinnedAt: DateTime nullable
+    pinnedUntil: DateTime nullable
+    weight: int default:0
+    status: enum(draft, pending, published, archived) default:draft
+    type: enum(post, page) default:post
+    commentable: boolean default:true
+    modifiedAt: DateTime nullable
+    relationships:
+      morphMany: Comment, Image, Meta
+      belongsToMany: Category, Tag
+
+  Meta:
+    key: string
+    value: text nullable
+    relationships:
+      morphTo: Metable
+
+  Comment:
+    post_id: id
+    content: text
+    rating: int min:0 max:5 default:0
+    published: boolean default:false
+    approved: boolean default:false
+    weight: int default:0
+    pinned: boolean default:false
+    pinnedAt: DateTime nullable
+    pinnedUntil: DateTime nullable
+    author: string
+    authorEmail: string
+    authorUrl: string nullable
+    authorIp: string nullable
+    parent_id: id foreign:comments
+    relationships:
+      morphTo: Commentable
+
+  Image:
+    title: string
+    url: string unique
+    path: string unique
+    is_default: boolean default:false
+    weight: int default:0
+    relationships:
+      morphTo: Imageable
+
+  # ActivityType:
+  #   type: string unique
+  # Activity:
+  #   user_id: id
+  #   type_id: id foreign:activity_types
+
+controllers:
